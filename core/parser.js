@@ -3,70 +3,87 @@
  * @Company: kaochong
  * @Date: 2021-06-18 18:27:17
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-20 20:04:10
+ * @LastEditTime: 2021-06-21 01:07:23
 */
 const { Node, NodeType } = require('./node-type'); 
+
+const kv = /[^ ]*=[^ ]*/g;
+
+function bfs(tree, start) {
+    if (!root) return;
+    const stack = [];
+    stack.push(root);
+    while(stack.length > 0) {
+        for (let i = 0, len = stack.length; i < len; i += 1) {   
+            const item = stack.pop();         
+            for (let j = 0, len = item.childrens.length; j < len; j += 1) {
+                stack.push(item.childrens[j]);
+            }
+            start(item);
+        }
+    }
+}
+
+// 解析ELEMENT_NODE Attribute属性以及TagName
+bfs(tree, (node) => {
+    if (node.type == NodeType.ELEMENT_NODE) {
+        const text = node.text;
+        let i = 0;
+        let tagName = '';
+        while(i < text.length) {
+            const char = text[i];
+            if (char !== " " && !node.tagName) {
+                tagName += text[i];
+            } else if (char == " " && !node.tagName) {
+                node.tagName = tagName;
+                break;
+            }
+            i += 1;
+        }
+        const kvArr = str.match(reg);
+        if (kvArr && kvArr.length > 0) {
+            kvArr.forEach(item => {
+                const key = item.split("=")[0];
+                const v = item.split("=");
+                let nv = '';
+                for (let i = 0; i < v.length; i += 1) {
+                    if (v[i] == "'" || v[i] == '"') {
+                        continue;
+                    }
+                    nv += v[i];
+                }
+                node.attribute.push({
+                    k: key,
+                    v: nv
+                });
+            });
+        }
+    }
+})
+
 function JsParser(str) {
-    
+    eval(str)
 }
 
 function CssParser(str) {
     
 }
-const str = `<!--
-* @Author: xiuquanxu
-* @Company: kaochong
-* @Date: 2021-06-18 17:17:59
-* @LastEditors: xiuquanxu
-* @LastEditTime: 2021-06-18 17:18:17
--->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Document</title>
-</head>
-<body>
-   <h1>this is mini browser</h1>
-</body>
-</html>`;
-
-const testComment = `<!--
-* @Author: xiuquanxu
-* @Company: kaochong
-* @Date: 2021-06-18 17:17:59
-* @LastEditors: xiuquanxu
-* @LastEditTime: 2021-06-18 17:18:17
--->`;
-
-const testDocument = `<!DOCTYPE html>`;
-
-const testElement = `<div class="p">this is p<div><spa>123</spa></div></div>`;
-
 
 function HtmlParser(str) {
-    const node = new Node(NodeType.TOP);
-    let i = -1;
-    let token = '';
-    const seek = (num) => i += num;
+    let i = 0;
     const back = () => i --;
     const next = () => i ++;
-    const deleteTokenLastLetter = (num) => token.substring(0, token.length - num);
-    const getChar = () => {
-        i += 1;
-        return str[i];
-    };
     const getNext = (num) => str[i + num];
     const getLast = (num) => str[i - num];
-    const startTagReg = /[<(<!)]/;
     function parserDocument() {
         const node = new Node(NodeType.DOCUMENT_NODE);
         let text = '';
         while (i < str.length) {
             text += str[i];
-            if (i == '>') break;
+            if (str[i] == '>') {
+                i += 1;
+                break;
+            };
             i += 1;
         }
         node.text = text;
@@ -77,7 +94,10 @@ function HtmlParser(str) {
         let text = '';
         while(i < str.length) {
             text += str[i];
-            if (i == '>') break;
+            if (str[i] == '>') {
+                i += 1;
+                break;
+            }
             i += 1;
         }
         node.text = text;
@@ -101,12 +121,28 @@ function HtmlParser(str) {
         const node = new Node(NodeType.ELEMENT_NODE);
         let text = '';
         while(i < str.length) {
-            if (str[i] == '<' && str[i + 1] !== '/') {
+            if (str[i] == '<' && str[i + 1] !== '/' && str[i + 1] !== '!') {
                 i += 1;
                 node.childrens.push(parserElement());
                 continue;
             } else if (str[i] == '<' && getNext(1) == '/') {
-                seek(6);
+                while(1) {
+                    i += 1;
+                    if (str[i] == '>') {
+                        break;
+                    }
+                }
+                i += 1;
+                break;
+            } else if (str[i] == '<' && getNext(1) == '!' && getNext(2) == '-') {
+                node.childrens.push(parserComment());
+                continue;
+            } else if (str[i] == '<' && getNext(1) == '!' && getNext(2) == 'D') {
+                node.childrens.push(parserDocument());
+                continue;
+            } else if (str[i] == '/' && getNext(1) == '>') {
+                i += 2;
+                node.text = text;
                 break;
             }
             if (str[i] == '>') {
@@ -123,34 +159,11 @@ function HtmlParser(str) {
         }
         return node;
     }
-    function parser(str, start, end) {
-        let state = 0;
-        let parentNode = node;
-        while(i < str.length) {
-            const char = getChar();
-            if (char == '<') {
-                if (getNext(1) == '!') {
-                    //<!
-                    const node = getNext(2) == 'D' ? parserDocument() : parserComment();
-                    console.log(node);
-                } else {
-                    // next();
-                    const node = parserElement(parentNode);
-                    console.log(node);
-                    break;
-                }
-            }
-        }
+    function parser(str) {
+        const node = parserElement();
+        return node;
     }
-
-    parser(str, (node, parent) => {
-        // start
-        parent.childrens.push(node);
-    }, () => {
-        // end
-        
-    });
+    return parser(str);
 }
 
-HtmlParser(testElement);
 module.exports = { HtmlParser, JsParser, CssParser }
