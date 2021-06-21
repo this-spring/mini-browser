@@ -3,13 +3,13 @@
  * @Company: kaochong
  * @Date: 2021-06-18 18:27:17
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-21 01:07:23
+ * @LastEditTime: 2021-06-21 14:47:11
 */
 const { Node, NodeType } = require('./node-type'); 
 
-const kv = /[^ ]*=[^ ]*/g;
-
-function bfs(tree, start) {
+const kvReg = /[^ ]*=[^ ]*/g;
+// var reg = /[^ ]*=[^ ]*/g
+function bfs(root, start) {
     if (!root) return;
     const stack = [];
     stack.push(root);
@@ -24,45 +24,12 @@ function bfs(tree, start) {
     }
 }
 
-// 解析ELEMENT_NODE Attribute属性以及TagName
-bfs(tree, (node) => {
-    if (node.type == NodeType.ELEMENT_NODE) {
-        const text = node.text;
-        let i = 0;
-        let tagName = '';
-        while(i < text.length) {
-            const char = text[i];
-            if (char !== " " && !node.tagName) {
-                tagName += text[i];
-            } else if (char == " " && !node.tagName) {
-                node.tagName = tagName;
-                break;
-            }
-            i += 1;
-        }
-        const kvArr = str.match(reg);
-        if (kvArr && kvArr.length > 0) {
-            kvArr.forEach(item => {
-                const key = item.split("=")[0];
-                const v = item.split("=");
-                let nv = '';
-                for (let i = 0; i < v.length; i += 1) {
-                    if (v[i] == "'" || v[i] == '"') {
-                        continue;
-                    }
-                    nv += v[i];
-                }
-                node.attribute.push({
-                    k: key,
-                    v: nv
-                });
-            });
-        }
-    }
-})
-
-function JsParser(str) {
-    eval(str)
+function JsParser(node) {
+    let scriptStr = '';
+    node.childrens.forEach(item => {
+        scriptStr += item.text;
+    });
+    eval(scriptStr)
 }
 
 function CssParser(str) {
@@ -159,11 +126,57 @@ function HtmlParser(str) {
         }
         return node;
     }
+
+    function parserAttribute(tree) {
+        bfs(tree, (node) => {
+            if (node.type == NodeType.ELEMENT_NODE) {
+                const text = node.text;
+                let i = 0;
+                let tagName = '';
+                if (!text) return;
+                while(i < text.length) {
+                    const char = text[i];
+                    if (char !== " " && !node.tagName) {
+                        tagName += text[i];
+                    } else if (char == " " && !node.tagName) {
+                        node.tagName = tagName;
+                        break;
+                    }
+                    i += 1;
+                }
+                const kvArr = text.match(kvReg);
+                if (kvArr && kvArr.length > 0) {
+                    let nv = '';
+                    kvArr.forEach(item => {
+                        const key = item.split("=")[0];
+                        const v = item.split("=")[1];
+
+                        for (let i = 0; i < v.length; i += 1) {
+                            if (v[i] == "'" || v[i] == '"') {
+                                continue;
+                            }
+                            nv += v[i];
+                        }
+                        node.attribute.push({
+                            k: key,
+                            v: nv
+                        });
+                    });
+                }
+            }
+        });
+    }
+
     function parser(str) {
         const node = parserElement();
+        parserAttribute(node);
+        console.log(node);
         return node;
     }
+
     return parser(str);
 }
 
-module.exports = { HtmlParser, JsParser, CssParser }
+// 解析ELEMENT_NODE Attribute属性以及TagName
+
+module.exports = { HtmlParser, JsParser, CssParser, bfs }
