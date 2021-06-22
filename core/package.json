@@ -11,5 +11,8 @@
     "skia"
   ],
   "author": "xiuquanxu",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "gui": "^0.9.6"
+  }
 }

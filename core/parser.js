@@ -3,13 +3,17 @@
  * @Company: kaochong
  * @Date: 2021-06-18 18:27:17
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-21 14:47:11
+ * @LastEditTime: 2021-06-22 23:18:59
 */
+const { Request } = require('./request.js');
 const { Node, NodeType } = require('./node-type'); 
 
+
 const kvReg = /[^ ]*=[^ ]*/g;
-// var reg = /[^ ]*=[^ ]*/g
-function bfs(root, start) {
+
+const r = new Request();
+
+async function bfs(root, start) {
     if (!root) return;
     const stack = [];
     stack.push(root);
@@ -24,6 +28,13 @@ function bfs(root, start) {
     }
 }
 
+async function DownloadJsCSS(url, node) {
+    const text = await r.req(url);
+    const newNode = new Node(NodeType.TEXT_NODE);
+    newNode.text = text;
+    node.childrens.push(newNode);
+}
+
 function JsParser(node) {
     let scriptStr = '';
     node.childrens.forEach(item => {
@@ -36,12 +47,13 @@ function CssParser(str) {
     
 }
 
-function HtmlParser(str) {
+async function HtmlParser(str, onTreeParserFinish) {
     let i = 0;
     const back = () => i --;
     const next = () => i ++;
     const getNext = (num) => str[i + num];
     const getLast = (num) => str[i - num];
+    const downloadTask = [];
     function parserDocument() {
         const node = new Node(NodeType.DOCUMENT_NODE);
         let text = '';
@@ -128,7 +140,7 @@ function HtmlParser(str) {
     }
 
     function parserAttribute(tree) {
-        bfs(tree, (node) => {
+        bfs(tree, async (node) => {
             if (node.type == NodeType.ELEMENT_NODE) {
                 const text = node.text;
                 let i = 0;
@@ -146,8 +158,8 @@ function HtmlParser(str) {
                 }
                 const kvArr = text.match(kvReg);
                 if (kvArr && kvArr.length > 0) {
-                    let nv = '';
                     kvArr.forEach(item => {
+                        let nv = '';
                         const key = item.split("=")[0];
                         const v = item.split("=")[1];
 
@@ -163,6 +175,33 @@ function HtmlParser(str) {
                         });
                     });
                 }
+                // 下载js
+                if (node.tagName == 'script') {
+                    for (let i = 0; i < node.attribute.length; i += 1) {
+                        const item = node.attribute[i];
+                        const { k, v } = item;
+                        if (k == 'src') {
+                            downloadTask.push({
+                                url: v,
+                                node,
+                            });
+                        }
+                    }
+                }
+                //  下载css
+                if (node.tagName == 'link') {
+                    for (let i = 0; i < node.attribute.length; i += 1) {
+                        const item = node.attribute[i];
+                        const { k, v } = item;
+                        if (k == 'href') {
+                            downloadTask.push({
+                                url: v,
+                                node,
+                            });
+                        }
+                    }
+                }
+                    
             }
         });
     }
@@ -170,11 +209,24 @@ function HtmlParser(str) {
     function parser(str) {
         const node = parserElement();
         parserAttribute(node);
-        console.log(node);
         return node;
     }
 
-    return parser(str);
+    const node = parser(str);
+    const allTask = [];
+    for (let i = 0; i < downloadTask.length; i += 1) {
+        const { url, node } = downloadTask[i];
+        const p = DownloadJsCSS(url, node);
+        allTask.push(p);
+    }
+    const p = new Promise((ok, no) => {
+        Promise.all(allTask).then(() => {
+            ok(node);
+        }).catch(() => {
+            no('error');
+        });
+    });
+    return p;
 }
 
 // 解析ELEMENT_NODE Attribute属性以及TagName
