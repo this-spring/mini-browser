@@ -3,10 +3,9 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-19 13:10:05
+ * @LastEditTime: 2021-06-22 23:38:54
 */
 const NodeType = {
-    TOP: 'TOP',
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
     TEXT_NODE: 'TEXT_NODE', // this is text
     COMMENT_NODE: 'COMMENT_NODE', //     <!--  --> html或css注释
