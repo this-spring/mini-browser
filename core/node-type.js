@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-22 23:38:54
+ * @LastEditTime: 2021-06-28 22:51:18
 */
 const NodeType = {
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
@@ -24,4 +24,11 @@ class Node {
     }
 }
 
-module.exports = { NodeType, Node }
+class RenderTreeNode {
+    constructor(tag) {
+        this.tag = tag;
+        this.attribute = {};
+    }
+}
+
+module.exports = { NodeType, RenderTreeNode, Node }

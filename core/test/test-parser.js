@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-21 00:12:57
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-22 23:22:28
+ * @LastEditTime: 2021-06-28 23:59:04
 */
 const fs = require('fs');
 const { NodeType } = require('../node-type.js');
@@ -19,6 +19,9 @@ let tree = null;
     bfs(tree, (node) => {
         if (node.type == NodeType.ELEMENT_NODE && node.tagName == 'script') {
             JsParser(node);
+        }
+        if (node.tagName == 'style') {
+            console.log("---", CssParser(node));
         }
     });
     // debug

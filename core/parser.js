@@ -3,48 +3,25 @@
  * @Company: kaochong
  * @Date: 2021-06-18 18:27:17
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-22 23:18:59
+ * @LastEditTime: 2021-06-28 23:57:41
 */
 const { Request } = require('./request.js');
 const { Node, NodeType } = require('./node-type'); 
-
+const { bfs } = require('./walk-tree.js');
+const { JsParser } = require('./js-parser');
+const { CssParser } = require('./css-parser');
 
 const kvReg = /[^ ]*=[^ ]*/g;
 
 const r = new Request();
 
-async function bfs(root, start) {
-    if (!root) return;
-    const stack = [];
-    stack.push(root);
-    while(stack.length > 0) {
-        for (let i = 0, len = stack.length; i < len; i += 1) {   
-            const item = stack.pop();         
-            for (let j = 0, len = item.childrens.length; j < len; j += 1) {
-                stack.push(item.childrens[j]);
-            }
-            start(item);
-        }
-    }
-}
+
 
 async function DownloadJsCSS(url, node) {
     const text = await r.req(url);
     const newNode = new Node(NodeType.TEXT_NODE);
     newNode.text = text;
     node.childrens.push(newNode);
-}
-
-function JsParser(node) {
-    let scriptStr = '';
-    node.childrens.forEach(item => {
-        scriptStr += item.text;
-    });
-    eval(scriptStr)
-}
-
-function CssParser(str) {
-    
 }
 
 async function HtmlParser(str, onTreeParserFinish) {
@@ -155,6 +132,9 @@ async function HtmlParser(str, onTreeParserFinish) {
                         break;
                     }
                     i += 1;
+                }
+                if (!node.tagName) {
+                    node.tagName = tagName;
                 }
                 const kvArr = text.match(kvReg);
                 if (kvArr && kvArr.length > 0) {
