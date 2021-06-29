@@ -3,10 +3,15 @@
  * @Company: kaochong
  * @Date: 2021-06-28 22:16:38
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-28 23:59:40
+ * @LastEditTime: 2021-06-29 11:08:12
 */
+const map = new Map();
+
+function GetCssMap() {
+    return map;
+}
+
 function CssParser(node) {
-    const map = new Map();
     let cssStr = '';
     node.childrens.forEach(item => {
         cssStr += item.text;
@@ -68,4 +73,4 @@ function CssParser(node) {
     return map;
 }
 
-module.exports = { CssParser }
+module.exports = { CssParser, GetCssMap }

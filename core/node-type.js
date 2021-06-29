@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-28 22:51:18
+ * @LastEditTime: 2021-06-29 14:59:16
 */
 const NodeType = {
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
@@ -25,9 +25,13 @@ class Node {
 }
 
 class RenderTreeNode {
-    constructor(tag) {
-        this.tag = tag;
-        this.attribute = {};
+    constructor(tagName) {
+        this.tagName = tagName;
+        this.text = '';
+        this.type = '';
+        this.childrens = [];
+        this.attribute = [];
+        this.renderAttribute = {};
     }
 }
 
