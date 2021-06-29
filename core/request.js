@@ -3,14 +3,14 @@
  * @Company: kaochong
  * @Date: 2021-06-18 14:16:06
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-18 18:26:22
+ * @LastEditTime: 2021-06-29 22:05:49
 */
 const http = require('http');
+const https = require('https');
 const { URL } = require('url');
-// http://example.org/
-// http://local.h5.com/mygithub/mini-browser/html/1.html
-// const str = 'http://local.h5.com/mygithub/mini-browser/html/1.html';
-// request(str);
+// const str = 'http://local.h5.com/mygithub/mini-browser/serve/public/index.html';
+// const str = 'http://127.0.0.1:80/index.html';
+
 class Request {
     req(str) {
        const p = new Promise((ok, no) => {
@@ -24,9 +24,11 @@ class Request {
             const req = http.request(options, (res) => {
                 res.setEncoding("utf-8");
                 res.on("data", (chunk) => {
+                    console.log(chunk);
                     ok(chunk)
                 });
                 req.on("error", (err) => {
+                    console.error(err);
                     no(err)
                 });
             });
@@ -35,5 +37,4 @@ class Request {
        return p;
     }
 }
-
 module.exports = { Request }

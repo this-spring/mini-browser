@@ -3,12 +3,12 @@
  * @Company: kaochong
  * @Date: 2021-06-18 14:15:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 16:01:36
+ * @LastEditTime: 2021-06-29 22:45:02
 */
 const { Request } = require('./request');
 const { NodeType, RenderTreeNode } = require('./node-type.js');
 const { HtmlParser, JsParser, CssParser, bfs } = require('./parser.js');
-const str = 'http://local.h5.com/mygithub/mini-browser/html/1.html';
+const str = 'http://127.0.0.1:80/index.html';
 class Browser {
     constructor() {
         this.request = new Request();
@@ -21,6 +21,7 @@ class Browser {
         const request = this.request.req;
         // 1. req html
         this.html = await request(str);
+        console.log('finish html');
         // 2. parser html
         this.tree = await this.parserHtml();
         // 3. jsparer runtime cssparser
@@ -31,6 +32,18 @@ class Browser {
         this.cssToRenderTree();
         console.log(this.renderTree);
         debugger;
+    }
+
+    querySelector(id) {
+        let res = null;
+        bfs(this.renderTree, (node) => {
+            node.attribute.forEach((item) => {
+                if (item.k == 'id' && `#${item.v}` == id) {
+                    res = node;
+                }
+            });
+        });
+        return res;
     }
 
     async parserHtml() {
@@ -98,5 +111,8 @@ class Browser {
         return node;
     }
 }
+let document = {};
 const b = new Browser();
+document = b;
+globalThis.document = document = b;
 b.run();

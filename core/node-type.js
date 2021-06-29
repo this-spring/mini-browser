@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 14:59:16
+ * @LastEditTime: 2021-06-29 22:52:51
 */
 const NodeType = {
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
@@ -32,6 +32,22 @@ class RenderTreeNode {
         this.childrens = [];
         this.attribute = [];
         this.renderAttribute = {};
+    }
+
+    set innerHTML(content) {
+        const node = new RenderTreeNode();
+        node.tagName = 'word';
+        node.text = content;
+        this.childrens = [];
+        this.childrens.push(node);
+    }
+
+    get innerHTML() {
+        let str = '';
+        this.childrens.forEach((item) => {
+            str += item.text;
+        });      
+        return str;
     }
 }
 

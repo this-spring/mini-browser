@@ -3,10 +3,25 @@
  * @Company: kaochong
  * @Date: 2021-06-06 23:59:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-22 23:52:49
+ * @LastEditTime: 2021-06-29 23:03:39
 -->
 # mini-browser
 make a mini browser
+
+# setup  
+
+## start server
+cd server
+node server.js
+
+Under this directory(server/public/), we usually write HTML, CSS and JS directories
+
+## run mini browser
+cd core
+node main.js
+
+browser running
+
 
 # book
 all md
