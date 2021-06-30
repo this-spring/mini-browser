@@ -3,25 +3,27 @@
  * @Company: kaochong
  * @Date: 2021-06-06 23:59:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 23:07:05
+ * @LastEditTime: 2021-07-01 00:08:05
 -->
 # mini-browser
 make a mini browser
 
-# setup  
-
-## start server
-cd server
-node server.js
-
-Under this directory(server/public/), we usually write HTML, CSS and JS directories
-
 ## run mini browser
+run server(Under this directory(server/public/), we usually write HTML, CSS and JS directories):  
+
+```
+cd server
+npm install
+node server.js  
+```
+
+run browser
+```
 cd core
-node main.js
-
-browser running
-
+npm install
+cd yue-gui
+node gui.js
+```
 
 # book
 all md
@@ -43,6 +45,7 @@ this.parserJSCSS();
 this.renderTree = this.makeRenderTree(this.tree);
 // 5. css to renderTree
 this.cssToRenderTree();
+// 6. gui render content
 ```
 
 Browser implemented by myself.   
