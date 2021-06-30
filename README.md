@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-06 23:59:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 23:03:39
+ * @LastEditTime: 2021-06-29 23:07:05
 -->
 # mini-browser
 make a mini browser
@@ -27,6 +27,24 @@ browser running
 all md
 
 # core
+
+mini broser source code.
+
+Workflow  
+```
+// 1. req html
+this.html = await request(str);
+console.log('finish html');
+// 2. parser html
+this.tree = await this.parserHtml();
+// 3. jsparer runtime cssparser
+this.parserJSCSS();
+// 4. make render tree
+this.renderTree = this.makeRenderTree(this.tree);
+// 5. css to renderTree
+this.cssToRenderTree();
+```
+
 Browser implemented by myself.   
 Node provides the js runtime.   
 OpenGL provides GUI rendering.  
@@ -41,10 +59,6 @@ refer other implemented browser
 # test-html
 other test source  
 
-# run  
-to do  
-
-you can see core folder source.
 
 # Source
 - https://browser.engineering/index.html

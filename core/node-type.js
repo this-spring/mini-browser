@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 22:52:51
+ * @LastEditTime: 2021-06-30 22:47:36
 */
 const NodeType = {
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
@@ -30,8 +30,8 @@ class RenderTreeNode {
         this.text = '';
         this.type = '';
         this.childrens = [];
-        this.attribute = [];
-        this.renderAttribute = {};
+        this.attribute = []; // [{ k: class, v: black }, { k: id, v: test }]
+        this.renderAttribute = {}; // { color: '#00000', background-color: '#ffffff' }
     }
 
     set innerHTML(content) {

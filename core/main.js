@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 14:15:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-29 22:45:02
+ * @LastEditTime: 2021-06-30 22:32:30
 */
 const { Request } = require('./request');
 const { NodeType, RenderTreeNode } = require('./node-type.js');
@@ -21,7 +21,6 @@ class Browser {
         const request = this.request.req;
         // 1. req html
         this.html = await request(str);
-        console.log('finish html');
         // 2. parser html
         this.tree = await this.parserHtml();
         // 3. jsparer runtime cssparser
@@ -30,8 +29,6 @@ class Browser {
         this.renderTree = this.makeRenderTree(this.tree);
         // 5. css to renderTree
         this.cssToRenderTree();
-        console.log(this.renderTree);
-        debugger;
     }
 
     querySelector(id) {
@@ -68,11 +65,11 @@ class Browser {
             let classs = '';
             let id = '';
             for (let i = 0; i < node.attribute.length; i += 1) {
-                if (node.attribute[i].class) {
-                    classs = node.attribute[i].class;
+                if (node.attribute[i].k == 'class') {
+                    classs = node.attribute[i].v;
                 }
-                if (node.attribute[i].id) {
-                    id = node.attribute[i].id;
+                if (node.attribute[i].k == 'id') {
+                    id = node.attribute[i].v;
                 }
             }
             this.cssMap.get(ele) && this.cssMap.get(ele).forEach((kv) => {
@@ -115,4 +112,4 @@ let document = {};
 const b = new Browser();
 document = b;
 globalThis.document = document = b;
-b.run();
+module.exports = { b, bfs }
