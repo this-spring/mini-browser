@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 22:51:12
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-06-30 22:47:36
+ * @LastEditTime: 2021-06-30 23:57:57
 */
 const NodeType = {
     ELEMENT_NODE: 'ELEMENT_NODE', // <p></p>
@@ -36,10 +36,12 @@ class RenderTreeNode {
 
     set innerHTML(content) {
         const node = new RenderTreeNode();
+        node.type = NodeType.TEXT_NODE;
         node.tagName = 'word';
         node.text = content;
         this.childrens = [];
         this.childrens.push(node);
+        render();
     }
 
     get innerHTML() {
