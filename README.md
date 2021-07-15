@@ -3,10 +3,21 @@
  * @Company: kaochong
  * @Date: 2021-06-06 23:59:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-07-01 00:08:05
+ * @LastEditTime: 2021-07-15 17:43:10
 -->
 # mini-browser
-make a mini browser
+make a mini browser  
+
+## web render  
+  
+<img src="./img/js-6.jpg">  
+
+## mini-browser render
+before js change html
+<img src="./img/js-5.png">  
+
+after js change html
+<img src="./img/js-7.jpg"/>  
 
 ## run mini browser
 run server(Under this directory(server/public/), we usually write HTML, CSS and JS directories):  
