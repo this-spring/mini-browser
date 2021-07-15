@@ -3,7 +3,7 @@
  * @Company: kaochong
  * @Date: 2021-06-18 14:15:56
  * @LastEditors: xiuquanxu
- * @LastEditTime: 2021-07-12 12:46:49
+ * @LastEditTime: 2021-07-15 17:07:02
 */
 const { Request } = require('./request');
 const { NodeType, RenderTreeNode } = require('./node-type.js');
@@ -57,7 +57,6 @@ class Browser {
             }
         });
         console.log('parser css res:', this.cssMap);
-        debugger
     }
 
     cssToRenderTree() {
